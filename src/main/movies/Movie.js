@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 import MovieListItems from './MovieListItems';
+import './Movie.css';
 
 export default class Movie extends Component {
   state = {
