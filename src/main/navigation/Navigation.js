@@ -3,6 +3,7 @@ import './Navigation.css';
 import Selection from './Selection';
 import Slider from './Slider';
 import Axios from 'axios';
+import SearchButton from './SearchButton';
 
 export default class Navigation extends Component {
   getGenres = () => {
@@ -26,7 +27,8 @@ export default class Navigation extends Component {
       rating,
       runtime,
       onGenreChange,
-      onSliderChange
+      onSliderChange,
+      onSearchButtonClick
     } = this.props;
 
     return (
@@ -39,6 +41,8 @@ export default class Navigation extends Component {
         <Slider data={year} onSliderChange={onSliderChange} />
         <Slider data={rating} onSliderChange={onSliderChange} />
         <Slider data={runtime} onSliderChange={onSliderChange} />
+
+        <SearchButton onSearchButtonClick={onSearchButtonClick} />
       </section>
     );
   }

@@ -8,31 +8,11 @@ export default class Movie extends Component {
     movies: []
   };
 
-  getMovies = () => {
-    Axios.get(
-      'https://api.themoviedb.org/3/discover/movie?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1'
-    )
+  getMovies = url => {
+    Axios.get(url)
       .then(res => {
-        const movies = res.data.results.map(result => {
-          const {
-            vote_count,
-            id,
-            genre_ids,
-            poster_path,
-            title,
-            vote_average,
-            release_date
-          } = result;
-          return {
-            vote_count,
-            id,
-            genre_ids,
-            poster_path,
-            title,
-            vote_average,
-            release_date
-          };
-        });
+        const movies = res.data.results;
+
         this.setState({
           movies
         });
@@ -43,7 +23,13 @@ export default class Movie extends Component {
   };
 
   componentDidMount() {
-    this.getMovies();
+    this.getMovies(this.props.url);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.url != nextProps.url) {
+      this.getMovies(nextProps.url);
+    }
   }
 
   render() {
