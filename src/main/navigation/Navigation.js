@@ -5,62 +5,30 @@ import Slider from './Slider';
 import Axios from 'axios';
 
 export default class Navigation extends Component {
-  state = {
-    genre: 'Comedy',
-    genres: [],
-    year: {
-      label: 'year',
-      min: 1990,
-      max: 2018,
-      step: 1,
-      value: { min: 2000, max: 2018 }
-    },
-    rating: {
-      label: 'rating',
-      min: 0,
-      max: 10,
-      step: 1,
-      value: { min: 8, max: 10 }
-    },
-    runtime: {
-      label: 'runtime',
-      min: 0,
-      max: 300,
-      step: 15,
-      value: { min: 60, max: 100 }
-    }
-  };
-
   getGenres = () => {
-    Axios.get(
-      'https://api.themoviedb.org/3/genre/movie/list?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US'
-    ).then(res => {
-      this.setState({
-        genres: res.data.genres
-      });
-      console.log(this.state.genres);
+    Axios.get(this.props.url).then(res => {
+      this.props.setGenres(res.data.genres);
     });
   };
 
   componentDidMount() {
-    this.getGenres();
+    if (this.props.genres != null) {
+      return this.getGenres();
+    }
+    alert('hai');
   }
 
-  onSliderChange = data => {
-    this.setState({
-      [data.type]: { ...this.state[data.type], value: data.value }
-    });
-  };
-
-  onGenreChange = event => {
-    this.setState({
-      genre: event.target.value
-    });
-  };
-
   render() {
-    const { genre, genres, year, rating, runtime } = this.state;
-    const { onGenreChange, onSliderChange } = this;
+    const {
+      genre,
+      genres,
+      year,
+      rating,
+      runtime,
+      onGenreChange,
+      onSliderChange
+    } = this.props;
+
     return (
       <section className="navigation">
         <Selection

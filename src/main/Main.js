@@ -5,6 +5,7 @@ import './Main.css';
 
 export default class Main extends Component {
   state = {
+    url: `https://api.themoviedb.org/3/genre/movie/list?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US`,
     genre: 'Comedy',
     genres: [],
     year: {
@@ -30,20 +31,15 @@ export default class Main extends Component {
     }
   };
 
-  getGenres = () => {
-    Axios.get(
-      'https://api.themoviedb.org/3/genre/movie/list?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US'
-    ).then(res => {
-      this.setState({
-        genres: res.data.genres
-      });
-      console.log(this.state.genres);
-    });
-  };
-
   onSliderChange = data => {
     this.setState({
       [data.type]: { ...this.state[data.type], value: data.value }
+    });
+  };
+
+  setGenres = genres => {
+    this.setState({
+      genres
     });
   };
 
@@ -53,12 +49,13 @@ export default class Main extends Component {
     });
   };
   render() {
-    const { onGenreChange, onSliderChange } = this;
+    const { onGenreChange, onSliderChange, setGenres } = this;
     return (
       <section className="main">
         <Navigation
           onGenreChange={onGenreChange}
           onSliderChange={onSliderChange}
+          setGenres={setGenres}
           {...this.state}
         />
         <Movie />
