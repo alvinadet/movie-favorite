@@ -6,7 +6,7 @@ import './Main.css';
 
 export default class Main extends Component {
   state = {
-    page: 2,
+    page: 1,
     total_pages: 1,
     moviesUrl: `https://api.themoviedb.org/3/discover/movie?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1`,
     url: `https://api.themoviedb.org/3/genre/movie/list?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US`,
@@ -54,9 +54,10 @@ export default class Main extends Component {
     });
   };
 
-  generateUrl = () => {
-    const { genres, rating, year, runtime, page } = this.state;
-    const selectedGenre = genres.find(genre => genre.name === this.state.genre);
+  generateUrl = params => {
+    const { genres, rating, year, runtime, page } = params;
+    const selectedGenre = genres.find(genre => genre.name === params.genre);
+    console.log(selectedGenre);
     const genreId = selectedGenre.id;
 
     const moviesUrl =
@@ -76,7 +77,8 @@ export default class Main extends Component {
   };
 
   onSearchButtonClick = () => {
-    this.generateUrl();
+    this.setState({ page: 1 });
+    this.generateUrl(this.state);
   };
 
   getMovies = url => {
@@ -113,16 +115,31 @@ export default class Main extends Component {
       });
     }
   };
+
+  saveStateToLocalStorage = () => {
+    localStorage.setItem('sweetpumpkins.params', JSON.stringify(this.state));
+  };
+
+  getStateFromLocalStorage = () => {
+    return JSON.parse(localStorage.getItem('sweetpumpkins.params'));
+  };
+
   componentDidMount() {
-    this.getMovies(this.state.moviesUrl);
+    const savedState = this.getStateFromLocalStorage();
+    if (!savedState || (savedState && !savedState.movies.length)) {
+      return this.getMovies(this.state.moviesUrl);
+    }
+    this.setState({ ...savedState });
+    this.generateUrl(savedState);
   }
 
   componentWillUpdate(nextProps, nextState) {
+    this.saveStateToLocalStorage();
     if (this.state.moviesUrl !== nextState.moviesUrl) {
       this.getMovies(nextState.moviesUrl);
     }
     if (this.state.page !== nextState.page) {
-      this.generateUrl();
+      this.generateUrl(nextState);
     }
   }
 
