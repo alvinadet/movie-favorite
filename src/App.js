@@ -1,20 +1,24 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 import Header from './header/Header';
-import Navigation from './main/navigation/Navigation';
-import Movie from './main/movies/Movie';
 import Main from './main/Main';
+import Movie from './movie/Movie';
+import NotFound from './NotFound';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-class App extends Component {
-  render() {
-    return (
+const App = () => {
+  return (
+    <BrowserRouter>
       <div>
         <Header />
-        <Main />
+        <Switch>
+          <Route path="/" exact component={Main} />
+          <Route path="/movie/:id" component={Movie} />
+          <Route component={NotFound} />
+        </Switch>
       </div>
-    );
-  }
-}
+    </BrowserRouter>
+  );
+};
 
 export default App;

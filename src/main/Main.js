@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Navigation from './navigation/Navigation';
-import Movies from './movies/Movie';
+import Movies from './movies/Movies';
 import Axios from 'axios';
 import './Main.css';
 

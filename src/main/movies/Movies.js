@@ -1,7 +1,7 @@
 import React from 'react';
 
 import MovieListItems from './MovieListItems';
-import './Movie.css';
+import './Movies.css';
 import Button from '../navigation/Button';
 
 const Movies = ({ movies, page, onPageDecrease, onPageIncrease }) => {
