@@ -3,7 +3,7 @@ import './Navigation.css';
 import Selection from './Selection';
 import Slider from './Slider';
 import Axios from 'axios';
-import SearchButton from './SearchButton';
+import Button from './Button';
 
 export default class Navigation extends Component {
   getGenres = () => {
@@ -42,7 +42,7 @@ export default class Navigation extends Component {
         <Slider data={rating} onSliderChange={onSliderChange} />
         <Slider data={runtime} onSliderChange={onSliderChange} />
 
-        <SearchButton onSearchButtonClick={onSearchButtonClick} />
+        <Button onClick={onSearchButtonClick}>Search</Button>
       </section>
     );
   }

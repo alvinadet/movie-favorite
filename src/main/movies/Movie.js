@@ -1,47 +1,24 @@
-import React, { Component } from 'react';
-import Axios from 'axios';
+import React from 'react';
+
 import MovieListItems from './MovieListItems';
 import './Movie.css';
+import Button from '../navigation/Button';
 
-export default class Movie extends Component {
-  state = {
-    movies: []
-  };
+const Movies = ({ movies, page, onPageDecrease, onPageIncrease }) => {
+  return (
+    <section>
+      <ul className="movies">
+        {movies.map(movie => {
+          return <MovieListItems key={movie.id} movie={movie} />;
+        })}
+      </ul>
+      <div className="pagination">
+        <Button onClick={onPageDecrease}>Pref</Button>
+        <span>{`page ${page}`}</span>
+        <Button onClick={onPageIncrease}>Next</Button>
+      </div>
+    </section>
+  );
+};
 
-  getMovies = url => {
-    Axios.get(url)
-      .then(res => {
-        const movies = res.data.results;
-
-        this.setState({
-          movies
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  componentDidMount() {
-    this.getMovies(this.props.url);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.url != nextProps.url) {
-      this.getMovies(nextProps.url);
-    }
-  }
-
-  render() {
-    const { movies } = this.state;
-    return (
-      <section>
-        <ul className="movies">
-          {movies.map(movie => {
-            return <MovieListItems key={movie.id} movie={movie} />;
-          })}
-        </ul>
-      </section>
-    );
-  }
-}
+export default Movies;

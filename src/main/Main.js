@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import Navigation from './navigation/Navigation';
-import Movie from './movies/Movie';
+import Movies from './movies/Movie';
+import Axios from 'axios';
 import './Main.css';
 
 export default class Main extends Component {
   state = {
+    page: 2,
+    total_pages: 1,
     moviesUrl: `https://api.themoviedb.org/3/discover/movie?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1`,
     url: `https://api.themoviedb.org/3/genre/movie/list?api_key=4b79163ef3bf5048e4b25dbf42578ca3&language=en-US`,
     genre: 'Comedy',
@@ -29,7 +32,8 @@ export default class Main extends Component {
       max: 300,
       step: 15,
       value: { min: 60, max: 100 }
-    }
+    },
+    movies: []
   };
 
   onSliderChange = data => {
@@ -51,7 +55,7 @@ export default class Main extends Component {
   };
 
   generateUrl = () => {
-    const { genres, rating, year, runtime } = this.state;
+    const { genres, rating, year, runtime, page } = this.state;
     const selectedGenre = genres.find(genre => genre.name === this.state.genre);
     const genreId = selectedGenre.id;
 
@@ -66,7 +70,7 @@ export default class Main extends Component {
       `vote_average.lte=${rating.value.max}&` +
       `with_runtime.gte=${runtime.value.min}&` +
       `with_runtime.lte=${runtime.value.max}&` +
-      `page=1`;
+      `page=${page}`;
 
     this.setState({ moviesUrl });
   };
@@ -75,12 +79,61 @@ export default class Main extends Component {
     this.generateUrl();
   };
 
+  getMovies = url => {
+    Axios.get(url)
+      .then(res => {
+        const movies = res.data.results;
+
+        this.setState({
+          movies,
+          total_pages: res.data.total_pages
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  onPageIncrease = () => {
+    const { page, total_pages } = this.state;
+    const nextPage = page + 1;
+    if (nextPage <= total_pages) {
+      this.setState({
+        page: nextPage
+      });
+    }
+  };
+
+  onPageDecrease = () => {
+    const { page, total_pages } = this.state;
+    const nextPage = page - 1;
+    if (nextPage > 0) {
+      this.setState({
+        page: nextPage
+      });
+    }
+  };
+  componentDidMount() {
+    this.getMovies(this.state.moviesUrl);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (this.state.moviesUrl !== nextState.moviesUrl) {
+      this.getMovies(nextState.moviesUrl);
+    }
+    if (this.state.page !== nextState.page) {
+      this.generateUrl();
+    }
+  }
+
   render() {
     const {
       onGenreChange,
       onSliderChange,
       setGenres,
-      onSearchButtonClick
+      onSearchButtonClick,
+      onPageIncrease,
+      onPageDecrease
     } = this;
     return (
       <section className="main">
@@ -91,7 +144,12 @@ export default class Main extends Component {
           onSearchButtonClick={onSearchButtonClick}
           {...this.state}
         />
-        <Movie url={this.state.moviesUrl} />
+        <Movies
+          url={this.state.moviesUrl}
+          {...this.state}
+          onPageDecrease={onPageDecrease}
+          onPageIncrease={onPageIncrease}
+        />
       </section>
     );
   }
